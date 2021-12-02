@@ -19,7 +19,7 @@ describe('Add Thread', () => {
       owner: ['asd'],
     };
 
-    // Action and Assert
+    // Action and Asser
     expect(() => new AddedThread(payload)).toThrowError('THREAD_ADDED.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
@@ -34,6 +34,7 @@ describe('Add Thread', () => {
     // Action
     const addedThread = new AddedThread(payload);
 
+    // Assert
     expect(addedThread.id).toEqual(payload.id);
     expect(addedThread.title).toEqual(payload.title);
     expect(addedThread.owner).toEqual(payload.owner);
