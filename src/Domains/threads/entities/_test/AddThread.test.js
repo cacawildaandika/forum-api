@@ -16,6 +16,7 @@ describe('Add Thread', () => {
     const payload = {
       title: 123,
       body: true,
+      owner: true,
     };
 
     // Action and Assert
@@ -27,6 +28,7 @@ describe('Add Thread', () => {
     const payload = {
       title: 'Title Thread A',
       body: 'Body Thread A',
+      owner: 'user-123',
     };
 
     // Action
@@ -34,5 +36,6 @@ describe('Add Thread', () => {
 
     expect(addThread.title).toEqual(payload.title);
     expect(addThread.body).toEqual(payload.body);
+    expect(addThread.owner).toEqual(payload.owner);
   });
 });
