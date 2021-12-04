@@ -13,6 +13,8 @@ describe('Add Comment', () => {
     // Arrange
     const payload = {
       content: 123,
+      owner: true,
+      thread: true,
     };
 
     // Action and Assert
@@ -23,6 +25,8 @@ describe('Add Comment', () => {
     // Arrange
     const payload = {
       content: 'thread-abc01',
+      owner: 'user-abc01',
+      thread: 'thread-abc01',
     };
 
     // Action
@@ -30,5 +34,7 @@ describe('Add Comment', () => {
 
     // Assert
     expect(addedComment.content).toEqual(payload.content);
+    expect(addedComment.owner).toEqual(payload.owner);
+    expect(addedComment.thread).toEqual(payload.thread);
   });
 });
