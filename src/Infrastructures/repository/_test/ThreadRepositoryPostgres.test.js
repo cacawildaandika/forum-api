@@ -103,31 +103,37 @@ describe('Thread Repository Postgres', () => {
       expect(thread.id).toBe('thread-123');
     });
 
-    // it('should return detail thread correctly', async () => {
-    //   // Arrange
-    //   const expectedData = {
-    //     id: 'thread-123',
-    //     title: 'title thread',
-    //     body: 'body thread',
-    //     username: 'andika',
-    //   };
-    //   const threadRepositoryPostgres = new ThreadRepositoryPostgres({
-    //     pool,
-    //     idGenerator: () => '123',
-    //   });
-    //   await UsersTableTestHelper.addUser({ id: 'user-123', username: expectedData.username });
-    //   await ThreadsTableTestHelper.addThread({
-    //     id: expectedData.id,
-    //     title: expectedData.title,
-    //     body: expectedData.body,
-    //     user_id: 'user-123',
-    //   });
-    //
-    //   // Action
-    //   const thread = await threadRepositoryPostgres.getById('thread-123');
-    //
-    //   // Assert
-    //   expect(thread.id).toBe('thread-123');
-    // });
+    it('should return detail thread correctly', async () => {
+      // Arrange
+      const expectedData = new DetailThread({
+        id: 'thread-123',
+        title: 'Thread title',
+        body: 'Thread body',
+        date: new Date().toDateString(),
+        username: 'andika',
+        comments: [],
+      });
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres({
+        pool,
+        idGenerator: () => '123',
+      });
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: expectedData.username });
+      await ThreadsTableTestHelper.addThread({
+        id: expectedData.id,
+        title: expectedData.title,
+        body: expectedData.body,
+        user_id: 'user-123',
+      });
+
+      // Action
+      const thread = await threadRepositoryPostgres.getById('thread-123');
+
+      // Assert
+      expect(thread).toHaveProperty('id');
+      expect(thread).toHaveProperty('title');
+      expect(thread).toHaveProperty('body');
+      expect(thread).toHaveProperty('username');
+      expect(thread).toHaveProperty('comments');
+    });
   });
 });
