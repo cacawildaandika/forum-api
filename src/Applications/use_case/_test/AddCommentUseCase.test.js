@@ -9,7 +9,7 @@ describe('AddCommentUseCase', () => {
   it('should orchestrating add comment function correctly', async () => {
     // Arrange
     const useCasePayload = {
-      token: 'userToken',
+      owner: 'user-123',
       content: 'Comment should here',
       thread: 'thread-123',
     };
@@ -22,22 +22,13 @@ describe('AddCommentUseCase', () => {
 
     // Generate Add Comment use case dependency
     const mockCommentRepository = new CommentRepository();
-    const mockAuthenticationRepository = new AuthenticationRepository();
-    const mockAuthenticationTokenManager = new AuthenticationTokenManager();
 
-    // Implement mock
-    mockAuthenticationRepository.checkAvailabilityToken = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockAuthenticationTokenManager.decodePayload = jest.fn()
-      .mockImplementation(() => Promise.resolve({ id: 'user-123', username: 'andika' }));
     mockCommentRepository.addComment = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedAddedComment));
 
     // Generate use case instance
     const addCommentUseCase = new AddCommentUseCase({
       commentRepository: mockCommentRepository,
-      authenticationRepository: mockAuthenticationRepository,
-      authenticationTokenManager: mockAuthenticationTokenManager,
     });
 
     // Action
