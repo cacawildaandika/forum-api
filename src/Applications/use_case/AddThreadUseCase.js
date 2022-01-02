@@ -9,18 +9,15 @@ class AddThreadUseCase {
 
   async execute(useCasePayload) {
     this.verifyPayload(useCasePayload);
-    const { title, body, token } = useCasePayload;
+    const { title, body, owner } = useCasePayload;
 
-    await this._authenticationRepository.checkAvailabilityToken(token);
-    const { id } = await this._authenticationTokenManager
-      .decodePayload(token);
+    const addThread = new AddThread({ title, body, owner });
 
-    const addThread = new AddThread({ title, body, owner: id });
     return this._threadRepository.addThread(addThread);
   }
 
-  verifyPayload({ title, body, token }) {
-    if (!title || !body || !token) {
+  verifyPayload({ title, body, owner }) {
+    if (!title || !body || !owner) {
       throw new Error('USE_CASE_ADD_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }
   }

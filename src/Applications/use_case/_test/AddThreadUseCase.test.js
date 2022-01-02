@@ -29,7 +29,7 @@ describe('AddThreadUseCase', () => {
     const useCasePayload = {
       title: 'Thread title',
       body: 'Thread body',
-      token: 'userToken',
+      owner: 'user-123',
     };
 
     const expectedAddedThread = new AddedThread({
