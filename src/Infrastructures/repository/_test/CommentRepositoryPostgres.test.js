@@ -23,10 +23,10 @@ describe('Comment Repository Postgres', () => {
     it('should persist comment', async () => {
       const fakeIdGenerator = () => '123';
 
-      const commentRepositoryPostgres = new CommentRepositoryPostgres({
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
-        idGenerator: fakeIdGenerator,
-      });
+        fakeIdGenerator,
+      );
 
       await UsersTableTestHelper.addUser({});
       await ThreadsTableTestHelper.addThread({});
@@ -44,10 +44,9 @@ describe('Comment Repository Postgres', () => {
     it('should return added comment correctly', async () => {
       const fakeIdGenerator = () => '123';
 
-      const commentRepositoryPostgres = new CommentRepositoryPostgres({
-        pool,
-        idGenerator: fakeIdGenerator,
-      });
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool, fakeIdGenerator,
+      );
 
       await UsersTableTestHelper.addUser({});
       await ThreadsTableTestHelper.addThread({});
@@ -69,10 +68,10 @@ describe('Comment Repository Postgres', () => {
   describe('find by id', () => {
     it('should throw InvariantError when comment not found', async () => {
       // Arrange
-      const commentRepositoryPostgres = new CommentRepositoryPostgres({
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
-        idGenerator: () => {},
-      });
+        () => {},
+      );
 
       // Action & Assert
       return expect(commentRepositoryPostgres.getById('xx'))
@@ -87,10 +86,10 @@ describe('Comment Repository Postgres', () => {
         content: 'asd',
         username: 'andika',
       };
-      const commentRepositoryPostgres = new CommentRepositoryPostgres({
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
-        idGenerator: () => '123',
-      });
+        () => '123',
+      );
       await UsersTableTestHelper.addUser({ id: 'user-123', username: expectedData.username });
       await ThreadsTableTestHelper.addThread({});
       await commentRepositoryPostgres.addComment({
@@ -114,10 +113,10 @@ describe('Comment Repository Postgres', () => {
         date: new Date().toDateString(),
         username: 'andika',
       });
-      const commentRepositoryPostgres = new CommentRepositoryPostgres({
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
-        idGenerator: () => '123',
-      });
+        () => '123',
+      );
       await UsersTableTestHelper.addUser({ id: 'user-123', username: expectedData.username });
       await ThreadsTableTestHelper.addThread({});
       await commentRepositoryPostgres.addComment({
@@ -143,10 +142,10 @@ describe('Comment Repository Postgres', () => {
       await ThreadsTableTestHelper.addThread({});
       await CommentsTableTestHelper.addComment({});
 
-      const commentRepositoryPostgres = new CommentRepositoryPostgres({
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
-        idGenerator: () => '123',
-      });
+        () => '123',
+      );
 
       await commentRepositoryPostgres.deleteComment('comment-123');
 
