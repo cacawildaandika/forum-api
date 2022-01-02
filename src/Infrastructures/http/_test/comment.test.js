@@ -108,5 +108,51 @@ describe('/comments endpoint', () => {
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual('tidak dapat membuat comment karena properti yang dibutuhkan kurang');
     });
+
+    it('should response 404 when thread not found', async () => {
+      // Arrange;
+      await UsersTableTestHelper.addUser({});
+      await ThreadTableTestHelper.addThread({});
+      // eslint-disable-next-line no-undef
+      const server = await createServer(container);
+
+      await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: {
+          username: 'cacawildaandika',
+          password: 'secret',
+          fullname: 'Dicoding Indonesia',
+        },
+      });
+
+      // login user
+      const loginResponse = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: {
+          username: 'cacawildaandika',
+          password: 'secret',
+        },
+      });
+      const { data: { accessToken } } = JSON.parse(loginResponse.payload);
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/xxx/comments',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        payload: {
+          content: 'asdf',
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('tidak dapat membuat comment karena thread tidak ditemukan');
+    });
   });
 });
