@@ -58,4 +58,24 @@ module.exports = class CommentRepositoryPostgres extends CommentRepository {
 
     return true;
   }
+
+  async getByThread(threadId) {
+    const query = {
+      text: 'SELECT comments.id, comments.content, comments.created_at, users.username FROM ( SELECT * FROM comments WHERE thread_id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('thread not found');
+    }
+
+    return new DetailComment({
+      id: result.rows[0].id,
+      content: result.rows[0].content,
+      date: result.rows[0].created_at.toString(),
+      username: result.rows[0].username,
+    });
+  }
 };
