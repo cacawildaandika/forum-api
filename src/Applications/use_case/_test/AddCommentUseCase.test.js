@@ -4,6 +4,7 @@ const AddCommentUseCase = require('../AddCommentUseCase');
 const AddComment = require('../../../Domains/comments/entities/AddComment');
 const AuthenticationRepository = require('../../../Domains/authentications/AuthenticationRepository');
 const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager');
+const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 
 describe('AddCommentUseCase', () => {
   it('should orchestrating add comment function correctly', async () => {
@@ -22,13 +23,17 @@ describe('AddCommentUseCase', () => {
 
     // Generate Add Comment use case dependency
     const mockCommentRepository = new CommentRepository();
+    const mockThreadRepository = new ThreadRepository();
 
     mockCommentRepository.addComment = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedAddedComment));
+    mockThreadRepository.getById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
     // Generate use case instance
     const addCommentUseCase = new AddCommentUseCase({
       commentRepository: mockCommentRepository,
+      threadRepository: mockThreadRepository,
     });
 
     // Action
@@ -41,5 +46,39 @@ describe('AddCommentUseCase', () => {
       owner: 'user-123',
       thread: useCasePayload.thread,
     }));
+  });
+
+  it('should return error when thread not found', async () => {
+    // Arrange
+    const useCasePayload = {
+      owner: 'user-123',
+      content: 'Comment should here',
+      thread: 'thread-123',
+    };
+
+    const expectedAddedComment = new AddedComment({
+      id: 'comment-123',
+      content: useCasePayload.content,
+      owner: 'user-123',
+    });
+
+    // Generate Add Comment use case dependency
+    const mockCommentRepository = new CommentRepository();
+    const mockThreadRepository = new ThreadRepository();
+
+    mockCommentRepository.addComment = jest.fn()
+      .mockImplementation(() => Promise.resolve(expectedAddedComment));
+
+    mockThreadRepository.getById = jest.fn()
+      .mockImplementation(() => Promise.reject(Error('thead not found')));
+
+    // Generate use case instance
+    const addCommentUseCase = new AddCommentUseCase({
+      commentRepository: mockCommentRepository,
+      threadRepository: mockThreadRepository,
+    });
+
+    // Action
+    await expect(addCommentUseCase.execute(useCasePayload)).rejects.toThrowError('USE_CASE_ADD_COMMENT.THREAD_NOT_FOUND');
   });
 });
