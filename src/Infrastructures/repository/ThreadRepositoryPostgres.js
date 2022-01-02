@@ -5,7 +5,7 @@ const InvariantError = require('../../Commons/exceptions/InvariantError');
 const DetailComment = require('../../Domains/comments/entities/DetailComment');
 
 module.exports = class ThreadRepositoryPostgres extends ThreadRepository {
-  constructor({ pool, idGenerator }) {
+  constructor(pool, idGenerator) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;

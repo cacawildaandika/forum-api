@@ -21,10 +21,10 @@ describe('Thread Repository Postgres', () => {
     it('should persist thread', async () => {
       const fakeIdGenerator = () => '123';
 
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres({
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
         pool,
-        idGenerator: fakeIdGenerator,
-      });
+        fakeIdGenerator,
+      );
 
       await UsersTableTestHelper.addUser({});
 
@@ -41,10 +41,10 @@ describe('Thread Repository Postgres', () => {
     it('should return added thread correctly', async () => {
       const fakeIdGenerator = () => '123';
 
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres({
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
         pool,
-        idGenerator: fakeIdGenerator,
-      });
+        fakeIdGenerator,
+      );
 
       await UsersTableTestHelper.addUser({});
 
@@ -65,10 +65,10 @@ describe('Thread Repository Postgres', () => {
   describe('find by id', () => {
     it('should throw InvariantError when thread not found', async () => {
       // Arrange
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres({
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
         pool,
-        idGenerator: () => {},
-      });
+        () => {},
+      );
 
       // Action & Assert
       return expect(threadRepositoryPostgres.getById('xx'))
@@ -84,10 +84,10 @@ describe('Thread Repository Postgres', () => {
         body: 'asd',
         username: 'andika',
       };
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres({
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
         pool,
-        idGenerator: () => '123',
-      });
+        () => '123',
+      );
       await UsersTableTestHelper.addUser({ id: 'user-123', username: expectedData.username });
       await ThreadsTableTestHelper.addThread({
         id: expectedData.id,
@@ -113,10 +113,10 @@ describe('Thread Repository Postgres', () => {
         username: 'andika',
         comments: [],
       });
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres({
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
         pool,
-        idGenerator: () => '123',
-      });
+        () => '123',
+      );
       await UsersTableTestHelper.addUser({ id: 'user-123', username: expectedData.username });
       await ThreadsTableTestHelper.addThread({
         id: expectedData.id,
