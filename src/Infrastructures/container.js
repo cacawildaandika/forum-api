@@ -223,12 +223,8 @@ container.register([
           internal: CommentRepository.name,
         },
         {
-          name: 'authenticationRepository',
-          internal: AuthenticationRepository.name,
-        },
-        {
-          name: 'authenticationTokenManager',
-          internal: AuthenticationTokenManager.name,
+          name: 'threadRepository',
+          internal: ThreadRepository.name,
         },
       ],
     },
