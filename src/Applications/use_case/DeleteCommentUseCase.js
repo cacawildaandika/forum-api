@@ -1,30 +1,36 @@
+const InvariantError = require('../../Commons/exceptions/InvariantError');
+
 module.exports = class DeleteCommentUseCase {
-  constructor({ commentRepository, authenticationRepository, authenticationTokenManager }) {
+  constructor({ commentRepository, threadRepository }) {
     this._commentRepository = commentRepository;
-    this._authenticationRepository = authenticationRepository;
-    this._authenticationTokenManager = authenticationTokenManager;
+    this._threadRepository = threadRepository;
   }
 
   async execute(useCasePayload) {
     this.verifyPayload(useCasePayload);
 
-    const { token, thread, comment } = useCasePayload;
+    const { owner, thread, comment } = useCasePayload;
 
-    await this._authenticationRepository.checkAvailabilityToken(token);
-    const decodedToken = await this._authenticationTokenManager
-      .decodePayload(token);
+    // Check thread availability
+    if (await this._threadRepository.verifyDeletedThread(thread)) throw new Error('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+    try {
+      const detailThread = await this._threadRepository.getById(thread);
+      if (detailThread === null) throw new InvariantError('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+    } catch (e) {
+      throw new InvariantError('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+    }
 
     const detailComment = await this._commentRepository.getById(comment);
 
-    if (!detailComment) throw new Error('USE_CASE_DELETE_COMMENT.NOT_FOUND');
-    if (detailComment.thread !== thread) throw new Error('USE_CASE_DELETE_COMMENT.NOT_FOUND');
-    if (detailComment.owner !== decodedToken.id) throw new Error('USE_CASE_DELETE_COMMENT.UNAUTHORIZED');
+    if (!detailComment) throw new Error('DELETE_COMMENT_USE_CASE.NOT_FOUND');
+
+    if (detailComment.user_id !== owner) throw new Error('DELETE_COMMENT_USE_CASE.UNAUTHORIZED');
 
     await this._commentRepository.deleteComment(detailComment.id);
     return true;
   }
 
-  verifyPayload({ token, thread, comment }) {
-    if (!comment || !token || !thread) throw new Error('USE_CASE_DELETE_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
+  verifyPayload({ thread, comment, owner }) {
+    if (!comment || !thread || !owner) throw new Error('USE_CASE_DELETE_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
   }
 };
