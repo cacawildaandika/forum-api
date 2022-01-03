@@ -21,6 +21,8 @@ DomainErrorTranslator._directories = {
   'DELETE_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('refresh token harus string'),
   'USE_CASE_ADD_THREAD.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidsak dapat membuat thread karena properti yang dibutuhkan kurang'),
   'USE_CASE_ADD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat comment karena properti yang dibutuhkan kurang'),
+  'THREAD_ADD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat thread karena data yang dikirimkan tidak valid'),
+  'COMMENT_ADD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat comment karena data yang dikirimkan tidak valid'),
   'USE_CASE_ADD_COMMENT.THREAD_NOT_FOUND': new NotFoundError('tidak dapat membuat comment karena thread tidak ditemukan'),
   'DETAIL_THREAD.NOT_FOUND': new NotFoundError('tidak dapat mengambil thread tidak ditemukan'),
   'DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND': new NotFoundError('tidak dapat menghapus comment karena thread tidak ditemukan'),
