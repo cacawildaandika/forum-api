@@ -56,7 +56,7 @@ module.exports = class CommentRepositoryPostgres extends CommentRepository {
 
   async getByThread(threadId) {
     const query = {
-      text: 'SELECT comments.id, comments.content, comments.created_at, users.username FROM ( SELECT * FROM comments WHERE thread_id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
+      text: 'SELECT comments.id, comments.content, comments.created_at, users.username, comments.deleted_at FROM ( SELECT * FROM comments WHERE thread_id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
       values: [threadId],
     };
 

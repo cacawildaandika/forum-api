@@ -24,7 +24,7 @@ module.exports = class GetDetailThreadUseCase {
         id: item.id,
         username: item.username,
         date: item.created_at.toString(),
-        content: item.content,
+        content: item.deleted_at !== null ? '**komentar telah dihapus**' : item.content,
       }));
     } catch (e) {
       console.log(`thread ${id} doesn't have comment`);
