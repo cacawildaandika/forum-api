@@ -71,11 +71,6 @@ module.exports = class CommentRepositoryPostgres extends CommentRepository {
       throw new InvariantError('thread not found');
     }
 
-    return new DetailComment({
-      id: result.rows[0].id,
-      content: result.rows[0].content,
-      date: result.rows[0].created_at.toString(),
-      username: result.rows[0].username,
-    });
+    return result.rows;
   }
 };

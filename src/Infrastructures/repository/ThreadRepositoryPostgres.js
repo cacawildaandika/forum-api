@@ -37,28 +37,20 @@ module.exports = class ThreadRepositoryPostgres extends ThreadRepository {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new InvariantError('thread not found');
+      throw new InvariantError('DETAIL_THREAD.NOT_FOUND');
     }
 
-    const queryComments = {
-      text: 'SELECT comments.id, comments.content, comments.user_id, comments.thread_id, comments.created_at, users.username FROM ( SELECT * FROM comments WHERE thread_id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
+    return result.rows[0];
+  }
+
+  async verifyDeletedThread(id) {
+    const query = {
+      text: 'SELECT threads.id, threads.deleted_at FROM ( SELECT * FROM threads WHERE id = $1 AND deleted_at IS NOT NULL) as threads',
       values: [id],
     };
 
-    const resultComments = await this._pool.query(queryComments);
+    const result = await this._pool.query(query);
 
-    const comments = resultComments.rows.map((item) => new DetailComment({
-      ...item,
-      date: item.created_at,
-    }));
-
-    return new DetailThread({
-      id: result.rows[0].id,
-      title: result.rows[0].title,
-      body: result.rows[0].body,
-      date: result.rows[0].created_at.toString(),
-      username: result.rows[0].username,
-      comments,
-    });
+    return result.rowCount;
   }
 };

@@ -133,7 +133,6 @@ describe('Thread Repository Postgres', () => {
       expect(thread).toHaveProperty('title');
       expect(thread).toHaveProperty('body');
       expect(thread).toHaveProperty('username');
-      expect(thread).toHaveProperty('comments');
     });
   });
 });

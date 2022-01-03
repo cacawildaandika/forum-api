@@ -108,4 +108,40 @@ describe('/threads endpoint', () => {
       expect(responseJson.message).toEqual('tidsak dapat membuat thread karena properti yang dibutuhkan kurang');
     });
   });
+
+  describe('detail thread', () => {
+    it('should response 404 when thread is not found', async () => {
+      // eslint-disable-next-line no-undef
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/xxxx',
+      });
+
+      // Action
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+    });
+
+    it('should correct threads', async () => {
+      // Arrange;
+      await UsersTableTestHelper.addUser({});
+      await ThreadTableTestHelper.addThread({});
+      // eslint-disable-next-line no-undef
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-123',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.thread).toBeDefined();
+    });
+  });
 });
