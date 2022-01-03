@@ -56,6 +56,8 @@ const createServer = async (container) => {
     // mendapatkan konteks response dari request
     const { response } = request;
 
+    // console.log(response);
+
     if (response instanceof Error) {
       // bila response tersebut error, tangani sesuai kebutuhan
       const translatedError = DomainErrorTranslator.translate(response);

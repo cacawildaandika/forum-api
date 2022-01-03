@@ -30,27 +30,22 @@ module.exports = class CommentRepositoryPostgres extends CommentRepository {
 
   async getById(id) {
     const query = {
-      text: 'SELECT comments.id, comments.content, comments.created_at, users.username FROM ( SELECT * FROM comments WHERE id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
+      text: 'SELECT comments.id, comments.content, comments.created_at, users.username, users.id as user_id FROM ( SELECT * FROM comments WHERE id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
       values: [id],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new InvariantError('thread not found');
+      throw new InvariantError('DELETE_COMMENT_USE_CASE.NOT_FOUND');
     }
 
-    return new DetailComment({
-      id: result.rows[0].id,
-      content: result.rows[0].content,
-      date: result.rows[0].created_at.toString(),
-      username: result.rows[0].username,
-    });
+    return result.rows[0];
   }
 
   async deleteComment(id) {
     const query = {
-      text: 'DELETE FROM comments WHERE id = $1',
+      text: `UPDATE comments SET deleted_at='${new Date().toISOString().slice(0, 19).replace('T', ' ')}' WHERE id = $1`,
       values: [id],
     };
 

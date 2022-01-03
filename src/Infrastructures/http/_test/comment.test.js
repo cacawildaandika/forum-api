@@ -155,4 +155,61 @@ describe('/comments endpoint', () => {
       expect(responseJson.message).toEqual('tidak dapat membuat comment karena thread tidak ditemukan');
     });
   });
+
+  describe('delete comment', () => {
+    it('should response 404 when thread is not found', async () => {
+      // eslint-disable-next-line no-undef
+      await UsersTableTestHelper.addUser({});
+      await ThreadTableTestHelper.addThread({});
+
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-123/comments/xxxx',
+      });
+
+      // Action
+      const responseJson = JSON.parse(response.payload);
+
+      console.log(responseJson);
+
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+    });
+
+    it('should response 404 when comment is not found', async () => {
+      // eslint-disable-next-line no-undef
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/xxxx/comments/xxxx',
+      });
+
+      // Action
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+    });
+
+    it('should correct threads', async () => {
+      // Arrange;
+      await UsersTableTestHelper.addUser({});
+      await ThreadTableTestHelper.addThread({});
+      // eslint-disable-next-line no-undef
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-123',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.thread).toBeDefined();
+    });
+  });
 });
