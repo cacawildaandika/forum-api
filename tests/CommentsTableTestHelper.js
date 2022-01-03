@@ -26,7 +26,7 @@ const CommentsTableTestHelper = {
 
   async deleteCommentsById(id) {
     const query = {
-      text: 'DELETE FROM comments WHERE id = $1',
+      text: `UPDATE comments SET deleted_at='${new Date().toISOString().slice(0, 19).replace('T', ' ')}' WHERE id = $1`,
       values: [id],
     };
 

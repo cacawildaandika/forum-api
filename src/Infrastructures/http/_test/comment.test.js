@@ -4,6 +4,7 @@ const AuthenticationsTableTestHelper = require('../../../../tests/Authentication
 const ThreadTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const createServer = require('../createServer');
 const container = require('../../container');
+const CommentTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 
 describe('/comments endpoint', () => {
   afterAll(async () => {
@@ -14,6 +15,7 @@ describe('/comments endpoint', () => {
     await UsersTableTestHelper.cleanTable();
     await AuthenticationsTableTestHelper.cleanTable();
     await ThreadTableTestHelper.cleanTable();
+    await CommentTableTestHelper.cleanTable();
   });
 
   describe('add comment', () => {
@@ -170,12 +172,7 @@ describe('/comments endpoint', () => {
       });
 
       // Action
-      const responseJson = JSON.parse(response.payload);
-
-      console.log(responseJson);
-
       expect(response.statusCode).toEqual(404);
-      expect(responseJson.status).toEqual('fail');
     });
 
     it('should response 404 when comment is not found', async () => {
@@ -188,28 +185,76 @@ describe('/comments endpoint', () => {
       });
 
       // Action
-      const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(404);
-      expect(responseJson.status).toEqual('fail');
     });
 
-    it('should correct threads', async () => {
+    it('should correct delete comment', async () => {
       // Arrange;
-      await UsersTableTestHelper.addUser({});
       await ThreadTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComment({});
       // eslint-disable-next-line no-undef
       const server = await createServer(container);
 
+      await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: {
+          username: 'dicoding',
+          password: 'secret',
+          fullname: 'Dicoding Indonesia',
+        },
+      });
+
+      // login user
+      const loginResponse = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: {
+          username: 'dicoding',
+          password: 'secret',
+        },
+      });
+      const { data: { accessToken } } = JSON.parse(loginResponse.payload);
+
+      const thread = await server.inject({
+        method: 'POST',
+        url: '/threads',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        payload: {
+          title: 'title thread',
+          body: 'body thread',
+        },
+      });
+
+      const threadJson = JSON.parse(thread.payload);
+
+      const comment = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadJson.data.addedThread.id}/comments`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        payload: {
+          content: 'content comment here',
+        },
+      });
+
+      const commentJson = JSON.parse(comment.payload);
+
       const response = await server.inject({
-        method: 'GET',
-        url: '/threads/thread-123',
+        method: 'DELETE',
+        url: `/threads/${threadJson.data.addedThread.id}/comments/${commentJson.data.addedComment.id}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
       // Assert
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
-      expect(responseJson.data.thread).toBeDefined();
     });
   });
 });

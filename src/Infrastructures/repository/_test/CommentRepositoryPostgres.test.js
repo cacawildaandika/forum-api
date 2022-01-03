@@ -131,7 +131,6 @@ describe('Comment Repository Postgres', () => {
       // Assert
       expect(comment).toHaveProperty('id');
       expect(comment).toHaveProperty('content');
-      expect(comment).toHaveProperty('date');
       expect(comment).toHaveProperty('username');
     });
   });
@@ -149,9 +148,9 @@ describe('Comment Repository Postgres', () => {
 
       await commentRepositoryPostgres.deleteComment('comment-123');
 
-      await expect(commentRepositoryPostgres.getById('comment-123'))
-        .rejects
-        .toThrowError(InvariantError);
+      const deletedComment = await commentRepositoryPostgres.getById('comment-123');
+
+      await expect(deletedComment.deleted_at).not.toBeNull();
     });
   });
 });
