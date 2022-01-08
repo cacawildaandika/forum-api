@@ -14,8 +14,7 @@ module.exports = class DeleteCommentUseCase {
     // Check thread availability
     if (await this._threadRepository.verifyDeletedThread(thread)) throw new Error('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
     try {
-      const detailThread = await this._threadRepository.getById(thread);
-      if (detailThread === null) throw new InvariantError('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+      await this._threadRepository.getById(thread);
     } catch (e) {
       throw new InvariantError('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
     }
