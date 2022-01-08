@@ -39,6 +39,27 @@ describe('DeleteCommentUseCase', () => {
     await expect(deleteCommentUseCase.execute(useCasePayload)).rejects.toThrowError('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
   });
 
+  it('should return error when payload is invalid', async () => {
+    // Arrange
+    const useCasePayload = {
+      thread: 'thread-123',
+      comment: 'comment-123',
+    };
+
+    // Generate Add Comment use case dependency
+    const mockCommentRepository = new CommentRepository();
+    const mockThreadRepository = new ThreadRepository();
+
+    // Generate use case instance
+    const deleteCommentUseCase = new DeleteCommentUseCase({
+      commentRepository: mockCommentRepository,
+      threadRepository: mockThreadRepository,
+    });
+
+    // Action
+    await expect(deleteCommentUseCase.execute(useCasePayload)).rejects.toThrowError(new Error('USE_CASE_DELETE_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY'));
+  });
+
   it('should return error when thread is not found', async () => {
     // Arrange
     const useCasePayload = {
