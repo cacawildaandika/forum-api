@@ -153,4 +153,37 @@ describe('Comment Repository Postgres', () => {
       await expect(deletedComment.deleted_at).not.toBeNull();
     });
   });
+
+  describe('get by thread', () => {
+    it('should return error when data is not found', async () => {
+      await UsersTableTestHelper.addUser({});
+      await CommentsTableTestHelper.addComment({});
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool,
+        () => '123',
+      );
+
+      await expect(commentRepositoryPostgres.getByThread('xxx')).rejects.toThrowError(new InvariantError('thread not found'));
+    });
+
+    it('should return valid field', async () => {
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({});
+      await CommentsTableTestHelper.addComment({});
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool,
+        () => '123',
+      );
+
+      const arrCommentsByThread = await commentRepositoryPostgres.getByThread('thread-123');
+
+      expect(arrCommentsByThread[0]).toHaveProperty('id');
+      expect(arrCommentsByThread[0]).toHaveProperty('content');
+      expect(arrCommentsByThread[0]).toHaveProperty('created_at');
+      expect(arrCommentsByThread[0]).toHaveProperty('username');
+      expect(arrCommentsByThread[0]).toHaveProperty('deleted_at');
+    });
+  });
 });
