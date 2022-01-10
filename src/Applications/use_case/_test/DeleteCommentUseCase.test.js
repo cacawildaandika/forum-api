@@ -1,11 +1,6 @@
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
-const AddComment = require('../../../Domains/comments/entities/AddComment');
-const AuthenticationRepository = require('../../../Domains/authentications/AuthenticationRepository');
-const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager');
 const DeleteCommentUseCase = require('../DeleteCommentUseCase');
-const AddedComment = require('../../../Domains/comments/entities/AddedComment');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const AddCommentUseCase = require('../AddCommentUseCase');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
 
 describe('DeleteCommentUseCase', () => {
