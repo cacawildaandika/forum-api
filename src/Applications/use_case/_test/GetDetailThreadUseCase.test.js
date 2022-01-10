@@ -1,6 +1,5 @@
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const GetDetailThreadUseCase = require('../GetDetailThreadUseCase');
-const DetailThread = require('../../../Domains/threads/entities/DetailThread');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const DetailComment = require('../../../Domains/comments/entities/DetailComment');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
