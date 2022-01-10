@@ -28,7 +28,7 @@ class ThreadsHandler {
 
   async deleteCommentsHandler(request, h) {
     const instance = this._container.getInstance(DeleteCommentUseCase.name);
-    const addedComment = await instance.execute({
+    await instance.execute({
       owner: request.auth.credentials.user.id,
       thread: request.params.threadId,
       comment: request.params.commentId,
@@ -36,9 +36,7 @@ class ThreadsHandler {
 
     const response = h.response({
       status: 'success',
-      data: {
-        addedComment,
-      },
+      data: {},
     });
     response.code(200);
     return response;
