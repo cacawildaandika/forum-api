@@ -2,8 +2,6 @@ const AddedComment = require('../../../Domains/comments/entities/AddedComment');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const AddCommentUseCase = require('../AddCommentUseCase');
 const AddComment = require('../../../Domains/comments/entities/AddComment');
-const AuthenticationRepository = require('../../../Domains/authentications/AuthenticationRepository');
-const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 
 describe('AddCommentUseCase', () => {
