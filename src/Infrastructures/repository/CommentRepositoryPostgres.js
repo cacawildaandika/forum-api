@@ -50,8 +50,6 @@ module.exports = class CommentRepositoryPostgres extends CommentRepository {
     };
 
     await this._pool.query(query);
-
-    return true;
   }
 
   async getByThread(threadId) {
