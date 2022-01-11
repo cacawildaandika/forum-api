@@ -26,7 +26,7 @@ module.exports = class LikeRepositoryPostgres extends LikeRepository {
 
   async getLastLikeUser({ thread, comment, owner }) {
     const query = {
-      text: 'SELECT likes.id, likes.thread_id, likes.comment_id, likes.user_id, likes.is_like FROM likes WHERE thread_id = $1 AND comment_id = $2 AND user_id = $3',
+      text: 'SELECT likes.id, likes.thread_id, likes.comment_id, likes.user_id, likes.is_like FROM likes WHERE thread_id = $1 AND comment_id = $2 AND user_id = $3 ORDER BY created_at desc',
       values: [thread, comment, owner],
     };
 
