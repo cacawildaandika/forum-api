@@ -1,7 +1,7 @@
 const AddLike = require('../../Domains/likes/entities/AddLike');
 const InvariantError = require('../../Commons/exceptions/InvariantError');
 
-class AddLikeUseCase {
+class AddLikeDislikeUseCase {
   constructor({ threadRepository, commentRepository, likeRepository }) {
     this._threadRepository = threadRepository;
     this._commentRepository = commentRepository;
@@ -23,7 +23,7 @@ class AddLikeUseCase {
     try {
       const detailComment = await this._commentRepository.getById(comment);
 
-      if (detailComment.deleted_at !== '') throw new InvariantError('comment is deleted');
+      if (detailComment.deleted_at !== '' && detailComment.deleted_at !== null) throw new InvariantError('comment is deleted');
     } catch (e) {
       if (e.message === 'comment is deleted') throw new Error('USE_CASE_ADD_LIKE.COMMENT_DELETED');
       throw new Error('USE_CASE_ADD_LIKE.COMMENT_NOT_FOUND');
@@ -53,4 +53,4 @@ class AddLikeUseCase {
   }
 }
 
-module.exports = AddLikeUseCase;
+module.exports = AddLikeDislikeUseCase;
