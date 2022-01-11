@@ -38,7 +38,7 @@ describe('GetDetailThreadUseCase', () => {
       username: 'username',
       date: '2021-01-01 20:20:10',
       content: 'content',
-      likeCount: '0',
+      likeCount: 0,
     });
 
     const expectedThread = {
@@ -121,6 +121,7 @@ describe('GetDetailThreadUseCase', () => {
         {
           id: 'user-abc01',
           created_at: '2021-01-01 20:20:10',
+          deleted_at: null,
           username: 'username',
           content: 'content',
           likeCount: 0,
@@ -146,7 +147,7 @@ describe('GetDetailThreadUseCase', () => {
     expect(detailThread.comments[0]).toHaveProperty('content');
     expect(detailThread.comments[0]).toHaveProperty('username');
     expect(detailThread.comments[0]).toHaveProperty('date');
-    expect(detailThread.comments[0]).toHaveProperty('date');
+    expect(detailThread.comments[0]).toHaveProperty('likeCount');
   });
 
   it('should return deleted comment with note', async () => {
@@ -157,7 +158,7 @@ describe('GetDetailThreadUseCase', () => {
       username: 'username',
       date: '2021-01-01 20:20:10',
       content: 'content',
-      likeCount: '0',
+      likeCount: 0,
     });
 
     const expectedThread = {

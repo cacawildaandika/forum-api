@@ -112,7 +112,7 @@ describe('Comment Repository Postgres', () => {
         content: 'Comment title',
         date: new Date().toDateString(),
         username: 'andika',
-        likeCount: '0',
+        likeCount: 0,
       });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
