@@ -66,4 +66,13 @@ module.exports = class CommentRepositoryPostgres extends CommentRepository {
 
     return result.rows;
   }
+
+  async updateLikeCount(id, likeCount) {
+    const query = {
+      text: 'UPDATE comments SET like_count = $2 WHERE id = $1',
+      values: [id, likeCount],
+    };
+
+    await this._pool.query(query);
+  }
 };
