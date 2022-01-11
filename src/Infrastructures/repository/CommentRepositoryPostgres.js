@@ -30,7 +30,7 @@ module.exports = class CommentRepositoryPostgres extends CommentRepository {
 
   async getById(id) {
     const query = {
-      text: 'SELECT comments.id, comments.content, comments.created_at, comments.deleted_at, users.username, users.id as user_id FROM ( SELECT * FROM comments WHERE id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
+      text: 'SELECT comments.id, comments.content, comments.created_at, comments.deleted_at, users.username, users.id as user_id, comments.like_count as likeCount FROM ( SELECT * FROM comments WHERE id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
       values: [id],
     };
 
@@ -54,7 +54,7 @@ module.exports = class CommentRepositoryPostgres extends CommentRepository {
 
   async getByThread(threadId) {
     const query = {
-      text: 'SELECT comments.id, comments.content, comments.created_at, users.username, comments.deleted_at FROM ( SELECT * FROM comments WHERE thread_id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
+      text: 'SELECT comments.id, comments.content, comments.created_at, users.username, comments.deleted_at, comments.like_count as likeCount FROM ( SELECT * FROM comments WHERE thread_id = $1) as comments INNER JOIN users ON comments.user_id = users.id',
       values: [threadId],
     };
 

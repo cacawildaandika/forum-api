@@ -18,6 +18,7 @@ describe('Detail Comment', () => {
       username: 123,
       date: [],
       content: 123,
+      likeCount: '0',
     };
 
     // Action and Assert
@@ -31,6 +32,7 @@ describe('Detail Comment', () => {
       username: 'johndoe',
       date: '2021-08-08T07:22:33.555Z',
       content: 'sebuah comment',
+      likeCount: '0',
     };
 
     // Action
