@@ -21,27 +21,39 @@ class AddLikeDislikeUseCase {
     }
 
     try {
-      const detailComment = await this._commentRepository.getById(comment);
+      // eslint-disable-next-line camelcase,prefer-const
+      let { likecount, deleted_at } = await this._commentRepository.getById(comment);
 
-      if (detailComment.deleted_at !== '' && detailComment.deleted_at !== null) throw new InvariantError('comment is deleted');
+      // eslint-disable-next-line camelcase
+      if (deleted_at !== '' && deleted_at !== null) throw new InvariantError('comment is deleted');
+
+      const lastLike = await this._likeRepository.getLastLikeUser({ thread, comment, owner });
+
+      const addLikePayload = {
+        thread, comment, owner, isLike,
+      };
+
+      if (Object.keys(lastLike).length > 0) {
+        addLikePayload.isLike = !lastLike.is_like;
+      }
+
+      const addLike = new AddLike(addLikePayload);
+
+      likecount = likecount === undefined ? 0 : likecount;
+
+      if (addLike.isLike) {
+        likecount += 1;
+      } else {
+        likecount -= 1;
+      }
+
+      await this._commentRepository.updateLikeCount(comment, likecount);
+
+      return this._likeRepository.addLike(addLike);
     } catch (e) {
       if (e.message === 'comment is deleted') throw new Error('USE_CASE_ADD_LIKE.COMMENT_DELETED');
       throw new Error('USE_CASE_ADD_LIKE.COMMENT_NOT_FOUND');
     }
-
-    const lastLike = await this._likeRepository.getLastLikeUser(thread, comment, owner);
-
-    const addLikePayload = {
-      thread, comment, owner, isLike,
-    };
-
-    if (Object.keys(lastLike).length > 0) {
-      addLikePayload.isLike = !lastLike.isLike;
-    }
-
-    const addLike = new AddLike(addLikePayload);
-
-    return this._likeRepository.addLike(addLike);
   }
 
   verifyPayload({
