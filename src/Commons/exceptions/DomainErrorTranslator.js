@@ -28,6 +28,10 @@ DomainErrorTranslator._directories = {
   'DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND': new NotFoundError('tidak dapat menghapus comment karena thread tidak ditemukan'),
   'DELETE_COMMENT_USE_CASE.NOT_FOUND': new NotFoundError('comment tidak dapat ditemukan'),
   'DELETE_COMMENT_USE_CASE.UNAUTHORIZED': new AuthorizationError('anda tidak berhak menghapus comment ini'),
+  'USE_CASE_ADD_LIKE.THREAD_NOT_FOUND': new NotFoundError('tidak dapat menyukai comment karena thread tidak ditemukan'),
+  'USE_CASE_ADD_LIKE.COMMENT_NOT_FOUND': new NotFoundError('tidak dapat menyukai comment karena comment tidak ditemukan'),
+  'USE_CASE_ADD_LIKE.COMMENT_DELETED': new NotFoundError('tidak dapat menyukai comment karena comment telah dihapus'),
+  'USE_CASE_ADD_LIKE.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat menyukai comment karena properti yang dibutuhkan kurang'),
 };
 
 module.exports = DomainErrorTranslator;
