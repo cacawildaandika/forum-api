@@ -166,7 +166,10 @@ describe('AddLikeDislikeUseCase', () => {
 
     mockLikeRepository.getLastLikeUser = jest.fn()
       .mockImplementation(() => Promise.resolve({
-        thread_id: useCasePayload.thread, comment_id: useCasePayload.comment, user_id: useCasePayload.owner, isLike: true,
+        thread_id: useCasePayload.thread,
+        comment_id: useCasePayload.comment,
+        user_id: useCasePayload.owner,
+        isLike: true,
       }));
 
     mockLikeRepository.addLike = jest.fn()
