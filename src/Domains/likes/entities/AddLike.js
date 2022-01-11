@@ -11,7 +11,7 @@ class AddLike {
   verifyPayload({
     thread, comment, owner, isLike,
   }) {
-    if (!thread || !comment || !owner || !isLike) {
+    if (!thread || !comment || !owner || isLike === undefined) {
       throw new Error('LIKE_ADD.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
