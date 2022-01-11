@@ -172,6 +172,9 @@ describe('AddLikeDislikeUseCase', () => {
     mockLikeRepository.addLike = jest.fn()
       .mockImplementation(() => Promise.resolve('like-abc123'));
 
+    mockCommentRepository.updateLikeCount = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+
     // Generate use case instance
     const addLikeUseCase = new AddLikeUseCase({
       threadRepository: mockThreadRepository,
@@ -211,6 +214,9 @@ describe('AddLikeDislikeUseCase', () => {
 
     mockLikeRepository.addLike = jest.fn()
       .mockImplementation(() => Promise.resolve('like-abc123'));
+
+    mockCommentRepository.updateLikeCount = jest.fn()
+      .mockImplementation(() => Promise.resolve());
 
     // Generate use case instance
     const addLikeUseCase = new AddLikeUseCase({
