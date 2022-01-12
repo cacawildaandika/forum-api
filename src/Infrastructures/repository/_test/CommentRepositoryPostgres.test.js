@@ -187,4 +187,21 @@ describe('Comment Repository Postgres', () => {
       expect(arrCommentsByThread[0]).toHaveProperty('deleted_at');
     });
   });
+
+  describe('update comments like count', () => {
+    it('should update comment correctly', async () => {
+      await CommentsTableTestHelper.addComment({});
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool,
+        () => '123',
+      );
+
+      await commentRepositoryPostgres.updateLikeCount('comment-123', 3);
+
+      const updatedComment = await CommentsTableTestHelper.findCommentsById('comment-123');
+
+      await expect(updatedComment[0].like_count).toBe(3);
+    });
+  });
 });
