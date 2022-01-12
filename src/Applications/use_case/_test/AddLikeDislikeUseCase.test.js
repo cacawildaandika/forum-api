@@ -232,4 +232,47 @@ describe('AddLikeDislikeUseCase', () => {
     // Action
     await expect(result).toBe('like-abc123');
   });
+
+  it('should orchestrating dislike when user already liked', async () => {
+    // Arrange
+    const useCasePayload = {
+      thread: 'thread-123',
+      comment: 'comment-123',
+      owner: 'user-123',
+      isLike: true,
+    };
+
+    // Generate Add Comment use case dependency
+    const mockCommentRepository = new CommentRepository();
+    const mockThreadRepository = new ThreadRepository();
+    const mockLikeRepository = new LikeRepository();
+
+    mockThreadRepository.getById = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+
+    mockCommentRepository.getById = jest.fn()
+      .mockImplementation(() => Promise.resolve({
+        id: 'comment-123', content: 'content comment', created_at: '2020-01-01 20:30:00', username: 'cacawildaandika', deleted_at: '', likecount: 2,
+      }));
+
+    mockLikeRepository.getLastLikeUser = jest.fn()
+      .mockImplementation(() => Promise.resolve({ id: 'like-abc123', is_like: true }));
+
+    mockLikeRepository.addLike = jest.fn()
+      .mockImplementation(() => Promise.resolve('like-abc123'));
+
+    mockCommentRepository.updateLikeCount = jest.fn()
+      .mockImplementation(() => Promise.resolve());
+
+    // Generate use case instance
+    const addLikeUseCase = new AddLikeUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+      likeRepository: mockLikeRepository,
+    });
+
+    const result = await addLikeUseCase.execute(useCasePayload);
+    // Action
+    expect(mockCommentRepository.updateLikeCount).toBeCalledWith('comment-123', 1);
+  });
 });
