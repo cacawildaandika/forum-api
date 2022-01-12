@@ -257,4 +257,75 @@ describe('/comments endpoint', () => {
       expect(responseJson.status).toEqual('success');
     });
   });
+
+  describe('Add like dislike', () => {
+    it('should add like', async () => {
+      // Arrange;
+      await ThreadTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComment({});
+      // eslint-disable-next-line no-undef
+      const server = await createServer(container);
+
+      await server.inject({
+        method: 'POST',
+        url: '/users',
+        payload: {
+          username: 'dicoding',
+          password: 'secret',
+          fullname: 'Dicoding Indonesia',
+        },
+      });
+
+      // login user
+      const loginResponse = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: {
+          username: 'dicoding',
+          password: 'secret',
+        },
+      });
+      const { data: { accessToken } } = JSON.parse(loginResponse.payload);
+
+      const thread = await server.inject({
+        method: 'POST',
+        url: '/threads',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        payload: {
+          title: 'title thread',
+          body: 'body thread',
+        },
+      });
+
+      const threadJson = JSON.parse(thread.payload);
+
+      const comment = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadJson.data.addedThread.id}/comments`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        payload: {
+          content: 'content comment here',
+        },
+      });
+
+      const commentJson = JSON.parse(comment.payload);
+
+      const response = await server.inject({
+        method: 'PUT',
+        url: `/threads/${threadJson.data.addedThread.id}/comments/${commentJson.data.addedComment.id}/likes`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+  });
 });
