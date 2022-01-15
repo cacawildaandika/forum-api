@@ -16,13 +16,8 @@ describe('DeleteCommentUseCase', () => {
     const mockCommentRepository = new CommentRepository();
     const mockThreadRepository = new ThreadRepository();
 
-    mockCommentRepository.deleteComment = jest.fn()
-      .mockImplementation(() => Promise.resolve());
     mockThreadRepository.verifyDeletedThread = jest.fn()
       .mockImplementation(() => Promise.resolve(true));
-
-    mockThreadRepository.getById = jest.fn()
-      .mockImplementation(() => Promise.reject(Error('thead not found')));
 
     // Generate use case instance
     const deleteCommentUseCase = new DeleteCommentUseCase({
@@ -32,6 +27,7 @@ describe('DeleteCommentUseCase', () => {
 
     // Action
     await expect(deleteCommentUseCase.execute(useCasePayload)).rejects.toThrowError('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+    expect(mockThreadRepository.verifyDeletedThread).toBeCalledWith(useCasePayload.thread);
   });
 
   it('should return error when payload is invalid', async () => {
@@ -67,8 +63,6 @@ describe('DeleteCommentUseCase', () => {
     const mockCommentRepository = new CommentRepository();
     const mockThreadRepository = new ThreadRepository();
 
-    mockCommentRepository.deleteComment = jest.fn()
-      .mockImplementation(() => Promise.resolve());
     mockThreadRepository.verifyDeletedThread = jest.fn()
       .mockImplementation(() => Promise.resolve(false));
 
@@ -83,6 +77,8 @@ describe('DeleteCommentUseCase', () => {
 
     // Action
     await expect(deleteCommentUseCase.execute(useCasePayload)).rejects.toThrowError('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+    expect(mockThreadRepository.verifyDeletedThread).toBeCalledWith(useCasePayload.thread);
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
   });
 
   it('should return error when comment is not found', async () => {
@@ -108,9 +104,6 @@ describe('DeleteCommentUseCase', () => {
     mockCommentRepository.getById = jest.fn()
       .mockImplementation(() => Promise.resolve(undefined));
 
-    mockCommentRepository.deleteComment = jest.fn()
-      .mockImplementation(() => Promise.resolve(undefined));
-
     // Generate use case instance
     const deleteCommentUseCase = new DeleteCommentUseCase({
       commentRepository: mockCommentRepository,
@@ -119,6 +112,9 @@ describe('DeleteCommentUseCase', () => {
 
     // Action
     await expect(deleteCommentUseCase.execute(useCasePayload)).rejects.toThrowError('DELETE_COMMENT_USE_CASE.NOT_FOUND');
+    expect(mockThreadRepository.verifyDeletedThread).toBeCalledWith(useCasePayload.thread);
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
+    expect(mockCommentRepository.getById).toBeCalledWith(useCasePayload.comment);
   });
 
   it('should return unauthorized when user is not a owner comment', async () => {
@@ -146,9 +142,6 @@ describe('DeleteCommentUseCase', () => {
         id: 'comment-123', content: 'comment is here', username: 'cacawildaandika', created_at: '2021-10-12 12:10:10', user_id: 'user-111',
       }));
 
-    mockCommentRepository.deleteComment = jest.fn()
-      .mockImplementation(() => Promise.resolve(true));
-
     // Generate use case instance
     const deleteCommentUseCase = new DeleteCommentUseCase({
       commentRepository: mockCommentRepository,
@@ -157,6 +150,9 @@ describe('DeleteCommentUseCase', () => {
 
     // Action
     await expect(deleteCommentUseCase.execute(useCasePayload)).rejects.toThrowError('DELETE_COMMENT_USE_CASE.UNAUTHORIZED');
+    expect(mockThreadRepository.verifyDeletedThread).toBeCalledWith(useCasePayload.thread);
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
+    expect(mockCommentRepository.getById).toBeCalledWith(useCasePayload.comment);
   });
 
   it('should orchestrating add comment function correctly', async () => {
@@ -195,5 +191,9 @@ describe('DeleteCommentUseCase', () => {
 
     // Action
     await expect(deleteCommentUseCase.execute(useCasePayload)).resolves.toBe(true);
+    expect(mockThreadRepository.verifyDeletedThread).toBeCalledWith(useCasePayload.thread);
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
+    expect(mockCommentRepository.getById).toBeCalledWith(useCasePayload.comment);
+    expect(mockCommentRepository.deleteComment).toBeCalledWith(useCasePayload.comment);
   });
 });
