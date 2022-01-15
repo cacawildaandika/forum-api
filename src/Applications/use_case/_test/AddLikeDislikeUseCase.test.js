@@ -3,6 +3,7 @@ const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const AddCommentUseCase = require('../AddCommentUseCase');
 const LikeRepository = require('../../../Domains/likes/LikeRepository');
 const AddLikeUseCase = require('../AddLikeDislikeUseCase');
+const AddLike = require('../../../Domains/likes/entities/AddLike');
 
 describe('AddLikeDislikeUseCase', () => {
   it('should return error when payload is not complete', async () => {
@@ -70,6 +71,7 @@ describe('AddLikeDislikeUseCase', () => {
 
     // Action
     await expect(addLikeUseCase.execute(useCasePayload)).rejects.toThrowError('USE_CASE_ADD_LIKE.THREAD_NOT_FOUND');
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
   });
 
   it('should return error when comment not found', async () => {
@@ -92,9 +94,6 @@ describe('AddLikeDislikeUseCase', () => {
     mockCommentRepository.getById = jest.fn()
       .mockImplementation(() => Promise.reject(new Error('comment not found')));
 
-    mockLikeRepository.addLike = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-
     // Generate use case instance
     const addLikeUseCase = new AddLikeUseCase({
       threadRepository: mockThreadRepository,
@@ -104,6 +103,8 @@ describe('AddLikeDislikeUseCase', () => {
 
     // Action
     await expect(addLikeUseCase.execute(useCasePayload)).rejects.toThrowError('USE_CASE_ADD_LIKE.COMMENT_NOT_FOUND');
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
+    expect(mockCommentRepository.getById).toBeCalledWith(useCasePayload.comment);
   });
 
   it('should return error when comment is deleted', async () => {
@@ -128,9 +129,6 @@ describe('AddLikeDislikeUseCase', () => {
         id: 'comment-123', content: 'content comment', created_at: '2020-01-01 20:30:00', username: 'cacawildaandika', deleted_at: '2020-01-01 20:30:00',
       }));
 
-    mockLikeRepository.addLike = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-
     // Generate use case instance
     const addLikeUseCase = new AddLikeUseCase({
       threadRepository: mockThreadRepository,
@@ -140,6 +138,8 @@ describe('AddLikeDislikeUseCase', () => {
 
     // Action
     await expect(addLikeUseCase.execute(useCasePayload)).rejects.toThrowError('USE_CASE_ADD_LIKE.COMMENT_DELETED');
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
+    expect(mockCommentRepository.getById).toBeCalledWith(useCasePayload.comment);
   });
 
   it('should orchestrating AddLikeDislikeUseCase', async () => {
@@ -188,6 +188,20 @@ describe('AddLikeDislikeUseCase', () => {
     const result = await addLikeUseCase.execute(useCasePayload);
     // Action
     await expect(result).toBe('like-abc123');
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
+    expect(mockCommentRepository.getById).toBeCalledWith(useCasePayload.comment);
+    expect(mockLikeRepository.getLastLikeUser).toBeCalledWith({
+      thread: useCasePayload.thread,
+      comment: useCasePayload.comment,
+      owner: useCasePayload.owner,
+    });
+    expect(mockCommentRepository.updateLikeCount).toBeCalledWith(useCasePayload.comment, 1);
+    expect(mockLikeRepository.addLike).toBeCalledWith(new AddLike({
+      thread: useCasePayload.thread,
+      comment: useCasePayload.comment,
+      owner: useCasePayload.owner,
+      isLike: true,
+    }));
   });
 
   it('should orchestrating AddLikeDislikeUseCase when last like is null', async () => {
@@ -231,6 +245,20 @@ describe('AddLikeDislikeUseCase', () => {
     const result = await addLikeUseCase.execute(useCasePayload);
     // Action
     await expect(result).toBe('like-abc123');
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
+    expect(mockCommentRepository.getById).toBeCalledWith(useCasePayload.comment);
+    expect(mockLikeRepository.getLastLikeUser).toBeCalledWith({
+      thread: useCasePayload.thread,
+      comment: useCasePayload.comment,
+      owner: useCasePayload.owner,
+    });
+    expect(mockCommentRepository.updateLikeCount).toBeCalledWith(useCasePayload.comment, 1);
+    expect(mockLikeRepository.addLike).toBeCalledWith(new AddLike({
+      thread: useCasePayload.thread,
+      comment: useCasePayload.comment,
+      owner: useCasePayload.owner,
+      isLike: true,
+    }));
   });
 
   it('should orchestrating dislike when user already liked', async () => {
@@ -273,6 +301,19 @@ describe('AddLikeDislikeUseCase', () => {
 
     const result = await addLikeUseCase.execute(useCasePayload);
     // Action
-    expect(mockCommentRepository.updateLikeCount).toBeCalledWith('comment-123', 1);
+    expect(mockThreadRepository.getById).toBeCalledWith(useCasePayload.thread);
+    expect(mockCommentRepository.getById).toBeCalledWith(useCasePayload.comment);
+    expect(mockLikeRepository.getLastLikeUser).toBeCalledWith({
+      thread: useCasePayload.thread,
+      comment: useCasePayload.comment,
+      owner: useCasePayload.owner,
+    });
+    expect(mockCommentRepository.updateLikeCount).toBeCalledWith(useCasePayload.comment, 1);
+    expect(mockLikeRepository.addLike).toBeCalledWith(new AddLike({
+      thread: useCasePayload.thread,
+      comment: useCasePayload.comment,
+      owner: useCasePayload.owner,
+      isLike: false,
+    }));
   });
 });
