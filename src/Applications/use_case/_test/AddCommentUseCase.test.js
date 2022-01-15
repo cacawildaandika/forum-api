@@ -78,5 +78,6 @@ describe('AddCommentUseCase', () => {
 
     // Action
     await expect(addCommentUseCase.execute(useCasePayload)).rejects.toThrowError('USE_CASE_ADD_COMMENT.THREAD_NOT_FOUND');
+    expect(mockThreadRepository.getById).toHaveBeenCalledWith(useCasePayload.thread);
   });
 });
